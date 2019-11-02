@@ -1,7 +1,7 @@
 import random
 import numpy as np
 
-
+#TODO: change random.uniform to hand-by function
 def two_normal_ran(mean, variance):
     w = 2
     while w > 1:
