@@ -1,7 +1,7 @@
-from S_State import entity
+from S_State import entity_state
 class Entity(object):
     def __init__(self):
-        self.state = entity.Spinning
+        self.state = entity_state.Spinning
         self.start_time = []
         self.end_time = []
         self.processing = False
