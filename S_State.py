@@ -3,10 +3,17 @@ from enum import Enum, unique
 
 @unique
 class machine_state(Enum):
-    Idle = 0  
+    ''' Contain two states  
+    "Idle" and "Work"
+    '''
+    Idle = 0
     Work = 1
 
     def next(self):
+        ''' flip the machine state  
+        Idle->Work  
+        Work->idle
+        '''
         cls = self.__class__
         members = list(cls)
         index = 1-members.index(self)
@@ -15,6 +22,9 @@ class machine_state(Enum):
 
 @unique
 class entity_state(Enum):
+    '''contain 5 states   
+    "Spinning" "Weaving" "Finishing" "Packing" and "Final"   
+    '''
     Spinning = 1
     Weaving = 2
     Finishing = 3
@@ -22,6 +32,9 @@ class entity_state(Enum):
     Final = 5
 
     def next(self):
+        ''' return next state  
+        "Spinning"->"Weaving"->"Finishing"->"Packing"->"Final"
+        '''
         cls = self.__class__
         members = list(cls)
         index = members.index(self) + 1
