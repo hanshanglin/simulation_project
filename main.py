@@ -20,8 +20,8 @@ def simulation(machine_num, RNG, waiting_queue=25):
     # set init value
     t = 0
     final_entity = []
-    # simulation
-    while t < 24*60*7:
+    # simulation -- a week
+    while t < 24*60*7*60: 
         # step 1: release all machine
         for i in machine_list:
             i.release(t)
