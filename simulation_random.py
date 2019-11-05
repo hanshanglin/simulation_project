@@ -1,6 +1,7 @@
 import random
 import numpy as np
 
+
 #TODO: change random.uniform to hand-by function
 def two_normal_ran(mean, variance):
     w = 2
@@ -12,11 +13,11 @@ def two_normal_ran(mean, variance):
     z1 = ((-2)*np.log(w)/w)**0.5 * v1
     z2 = ((-2)*np.log(w)/w)**0.5 * v2
 
-    return (mean + variance**0.5 * z1), (mean + variance**0.5 * z2)
+    return int(np.around(mean + variance**0.5 * z1)), int(np.around(mean + variance**0.5 * z2))
 
 
 def exp_ran(mean):
-    return (-mean) * np.log(1 - random.uniform(0, 1))  # u is equivalent to (1 - u)random.uniform(0, 1)
+    return int(np.around((-mean) * np.log(1 - random.uniform(0, 1))))  # u is equivalent to (1 - u)random.uniform(0, 1)
 
 
 if __name__ == "__main__":
