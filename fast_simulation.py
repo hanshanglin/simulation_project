@@ -3,8 +3,13 @@ from Entity import Entity
 from S_State import entity_state
 from simulation_random import two_normal_ran, exp_ran
 import itertools
-
-
+import random
+import numpy as np
+import logging
+from config import *
+from multiprocessing import Process, Pool
+import os 
+import multiprocessing
 
 def simulation(machine_num, RNG, waiting_queue=25):
     # generate waiting_queue and machine
@@ -20,16 +25,22 @@ def simulation(machine_num, RNG, waiting_queue=25):
                      for i in range(machine_num[3])]
     # set init value
     t = 0
-    final_entity = []
     count = 0
+    final_entity = []
+    end_t = 24*60*7*60
     # simulation -- a week
-    while t < 24*60: 
+    while t < end_t: 
+        logging.debug('\n'+"T="+str(t))
         # step 1: release all machine
         for i in machine_list:
             i.release(t)
         # step 2: detect all final entity and replace by a new one
         for i, cur_entity in enumerate(waiting_queue):
             if (not cur_entity.isProcessing()) and (cur_entity.state is entity_state.Final):
+                #if flag:
+                #    logging.debug("First entity finished, T = "+str(t))
+                #    end_t+=t
+                #    flag = not flag
                 final_entity.append(cur_entity)
                 waiting_queue[i] = Entity()
         # step 3: process entity as much as possible
@@ -43,32 +54,33 @@ def simulation(machine_num, RNG, waiting_queue=25):
                     m.process(i, t)
                     break
             # end
-        # step 4: update all machine
+        # step 4: collect all next idle time
+        next_idle_time = INTMAX
+        for i in machine_list:
+            next_idle_time = min(next_idle_time,i.release(t))
+        
+        # step 5: update all machine
         for i in machine_list:
             i.update(t)
-        t += 1
+
+        # step 6: change t
+        if next_idle_time>t:
+            t = next_idle_time
+        else:
+            t = t+1
         count+=1
-    print(len(final_entity))
-    print(count)
+    #print(len(final_entity))
+    print(str(machine_num)+" "+str(count))
     return
+
 
 
 if __name__ == "__main__":
     # config
-    MAX_WAITING_QUEUE = 25
-    MAX_MACHINE_NUM = 10
-
-    def SPINNING_RV(): return two_normal_ran(240, 120)[0]
-
-    def WEAVING_RV(): return two_normal_ran(480, 200)[0]
-
-    def FINISHING_RV(): return exp_ran(120)
-
-    def PACKING_RV(): return exp_ran(360)
-
-    RV_list = [SPINNING_RV, WEAVING_RV, FINISHING_RV, PACKING_RV]
-    machine_num = [0]*4
-    # do all simulation for each step num[1...10]
-    #for machine_num in itertools.product(range(1, MAX_MACHINE_NUM+1), repeat=4):
-    #    simulation(machine_num, RV_list)
-    simulation((5,5,5,5), RV_list)
+    logging.basicConfig(format='[line:%(lineno)d] - %(levelname)s: %(message)s',
+                    level=OUTPUTLEVEL)
+    p = Pool()
+    for i in range(1,11):
+        p.apply_async(simulation,args=((i,i,i,i),RV_list,))
+    p.close()
+    p.join()
