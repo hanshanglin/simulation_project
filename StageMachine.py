@@ -8,7 +8,6 @@ logging.basicConfig(format='[line:%(lineno)d] - %(levelname)s: %(message)s',
 class machine_count():
     count = 0
 class StageMachine(machine_count):
-    machine_id = 0
     def __init__(self, RV_generater, machine_type):
         self.RV = RV_generater
         self.type = machine_type
@@ -16,12 +15,14 @@ class StageMachine(machine_count):
         self.next_idle_time = -1
         self.idle_time = 0
         self.entity = None
+        self.last_idle_time = 0
         self.id = machine_count.count 
         machine_count.count += 1
         
     def update(self,cur_time):
         if self.state == machine_state.Idle:
-            self.idle_time +=1
+            self.idle_time += self.last_idle_time-cur_time
+            self.last_idle_time = cur_time
         else:
             if cur_time>=self.next_idle_time:
                 logging.debug(str(self.type)+str(self.id)+" finish: "+self.entity.id)
@@ -32,6 +33,7 @@ class StageMachine(machine_count):
     
     def release(self,cur_time):
         if self.state == machine_state.Work:
+            self.last_idle_time = cur_time
             if cur_time>=self.next_idle_time:
                 self.state = machine_state.Idle
                 logging.debug("{:<20}          finish{:>15}".format(self.getName(),self.entity.getName()))
