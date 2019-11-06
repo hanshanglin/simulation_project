@@ -1,15 +1,13 @@
 from StageMachine import StageMachine
 from Entity import Entity
 from S_State import entity_state
-from simulation_random import two_normal_ran, exp_ran
 import itertools
 import random
 import numpy as np
 import logging
 from config import *
-from multiprocessing import Process, Pool
+from multiprocessing import Pool
 import os 
-import multiprocessing
 
 def simulation(machine_num, RNG, waiting_queue=25):
     # generate waiting_queue and machine
@@ -69,7 +67,7 @@ def simulation(machine_num, RNG, waiting_queue=25):
         else:
             t = t+1
         count+=1
-    #print(len(final_entity))
+    print(len(final_entity))
     print(str(machine_num)+" "+str(count))
     return
 
