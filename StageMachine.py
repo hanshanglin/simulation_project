@@ -63,3 +63,6 @@ class StageMachine(machine_count):
 
     def getName(self):
         return str(self.type.name)+"-"+str(self.id)
+
+    def getIdleTime(self):
+        return self.idle_time
